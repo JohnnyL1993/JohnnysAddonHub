@@ -1,0 +1,19 @@
+## Interface: 30300
+## Title: Johnny's Warmane Addon Hub
+## Notes: Always-on-screen launcher bar - shows a button for each of Johnny's standalone addons (Blacklist, Gear Advisor, Raid Browser, Raid Comp, Raid Roll) that's currently installed and enabled.
+## Author: Johnny
+## Version: 2.0
+## SavedVariables: JohnnysAddonHubDB
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceEvent-3.0\AceEvent-3.0.xml
+Libs\AceConsole-3.0\AceConsole-3.0.xml
+Libs\AceDB-3.0\AceDB-3.0.xml
+
+Core.lua
+Modules\Skin.lua
+Modules\ChatConfigFix.lua
+
+Modules\Hub\Init.lua
