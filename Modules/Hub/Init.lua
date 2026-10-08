@@ -33,6 +33,14 @@ local LAUNCHERS = {
 		end,
 	},
 	{
+		category = "Crafting",
+		name = "Professions",
+		addon = "JohnnysProfessions",
+		onClick = function()
+			JohnnysProfessions:Toggle()
+		end,
+	},
+	{
 		category = "Raiding",
 		name = "Raid Browser",
 		addon = "JohnnysRaidBrowser",

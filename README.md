@@ -2,11 +2,11 @@
 
 A World of Warcraft 3.3.5a addon for the Warmane private server.
 
-Always-on-screen launcher bar - shows a button for each of Johnny's standalone addons (Blacklist, Gear Advisor, Raid Browser, Raid Comp, Raid Roll) that's currently installed and enabled.
+Always-on-screen launcher bar - shows a button for each of Johnny's standalone addons (Blacklist, Gear Advisor, Professions, Raid Browser, Raid Comp, Raid Roll) that's currently installed and enabled.
 
 ## Requirements
 
-No other addons required. The bar shows a button for each of Johnny's addons you have installed (Raid Comp, Gear Advisor, Blacklist, Raid Browser, Raid Roll).
+No other addons required. The bar shows a button for each of Johnny's addons you have installed (Raid Comp, Gear Advisor, Professions, Blacklist, Raid Browser, Raid Roll).
 
 ## Install
 
@@ -31,6 +31,7 @@ Download the latest release zip, delete the old `JohnnysAddonHub` folder, and ex
 - [Johnny's Blacklist](https://github.com/JohnnyL1993/JohnnysBlackList)
 - [Johnny's Currency Tracker](https://github.com/JohnnyL1993/JohnnysCurrencyBar)
 - [Johnny's Gear Advisor](https://github.com/JohnnyL1993/JohnnysGearAdvisor)
+- [Johnny's Professions](https://github.com/JohnnyL1993/JohnnysProfessions)
 - [Johnny's Messenger](https://github.com/JohnnyL1993/JohnnysMessenger)
 - [Johnny's Raid Browser](https://github.com/JohnnyL1993/JohnnysRaidBrowser)
 - [Johnny's Raid Roll](https://github.com/JohnnyL1993/JohnnysRaidRoll)
