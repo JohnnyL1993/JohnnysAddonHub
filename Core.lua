@@ -6,6 +6,9 @@ local defaults = {
 	profile = {
 		hubBarPosition = { point = "CENTER", relativePoint = "CENTER", x = 0, y = 250 },
 		hubBarCollapsed = false,
+		-- Edge drawer (Modules\Hub\Init.lua): dock is "LEFT", "RIGHT" or "TOP",
+		-- offset slides it along that edge from the centre.
+		drawer = { dock = "LEFT", offset = 0, pinned = false, hover = true },
 	},
 }
 
@@ -18,7 +21,7 @@ end
 function JohnnysAddonHub:OnHubSlashCommand(input)
 	local module = self:GetModule("Hub", true)
 	if module then
-		module:ToggleBar()
+		module:HandleCommand(input)
 	else
 		self:Print("Hub module failed to load.")
 	end

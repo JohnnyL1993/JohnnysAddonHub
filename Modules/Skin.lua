@@ -11,27 +11,27 @@ Skin.WHITE = "Interface\\Buttons\\WHITE8X8"
 function Skin:StylePanel(frame, alpha)
 	frame:SetBackdrop({ bgFile = self.WHITE, edgeFile = self.WHITE, edgeSize = 1 })
 	frame:SetBackdropColor(0.03, 0.03, 0.03, alpha or 0.92)
-	frame:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+	frame:SetBackdropBorderColor(0.180, 0.224, 0.243, 1)
 end
 
 function Skin:StyleButton(btn)
 	btn:SetBackdrop({ bgFile = self.WHITE, edgeFile = self.WHITE, edgeSize = 1 })
-	btn:SetBackdropColor(0.06, 0.06, 0.06, 0.95)
-	btn:SetBackdropBorderColor(0.35, 0.35, 0.35, 1)
+	btn:SetBackdropColor(0.090, 0.114, 0.125, 0.95)
+	btn:SetBackdropBorderColor(0.243, 0.298, 0.322, 1)
 
 	local highlight = btn:CreateTexture(nil, "HIGHLIGHT")
 	highlight:SetAllPoints()
 	highlight:SetTexture(self.WHITE)
-	highlight:SetVertexColor(1, 1, 1, 0.12)
+	highlight:SetVertexColor(0.725, 0.886, 0.290, 0.14)
 	btn:SetHighlightTexture(highlight)
 
 	btn:SetScript("OnMouseDown", function(self)
 		if self:IsEnabled() then
-			self:SetBackdropColor(0.18, 0.18, 0.18, 0.95)
+			self:SetBackdropColor(0.160, 0.200, 0.220, 0.95)
 		end
 	end)
 	btn:SetScript("OnMouseUp", function(self)
-		self:SetBackdropColor(0.06, 0.06, 0.06, 0.95)
+		self:SetBackdropColor(0.090, 0.114, 0.125, 0.95)
 	end)
 end
 
@@ -68,7 +68,7 @@ function Skin:CreateCheckbox(parent, size, initialState, onToggle)
 
 	local mark = box:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	mark:SetPoint("CENTER")
-	mark:SetTextColor(1, 1, 1)
+	mark:SetTextColor(0.725, 0.886, 0.290)
 	box.mark = mark
 	box.checked = initialState and true or false
 	mark:SetText(box.checked and "X" or "")
