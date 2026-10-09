@@ -2,7 +2,7 @@
 ## Title: Johnny's Warmane Addon Hub
 ## Notes: Always-on-screen launcher bar - shows a button for each of Johnny's standalone addons (Blacklist, Gear Advisor, Professions, Raid Browser, Raid Comp, Raid Roll) that's currently installed and enabled.
 ## Author: Johnny
-## Version: 2.2
+## Version: 2.3
 ## SavedVariables: JohnnysAddonHubDB
 
 Libs\LibStub\LibStub.lua

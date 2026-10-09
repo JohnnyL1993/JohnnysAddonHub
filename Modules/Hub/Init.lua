@@ -113,7 +113,8 @@ local LAUNCHERS = {
 local function GetVisibleLaunchers()
 	local visible = {}
 	for _, launcher in ipairs(LAUNCHERS) do
-		if not launcher.addon or IsAddOnLoaded(launcher.addon) then
+		local hidden = JohnnysAddonHub.db.profile.drawer.hidden
+		if (not launcher.addon or IsAddOnLoaded(launcher.addon)) and not (hidden and hidden[launcher.name]) then
 			table.insert(visible, launcher)
 		end
 	end
@@ -284,16 +285,10 @@ local function SetDock(dock)
 	ApplyPosition()
 end
 
-local function CycleDock()
-	local dock = DB().dock
-	if dock == "LEFT" then
-		SetDock("TOP")
-	elseif dock == "TOP" then
-		SetDock("RIGHT")
-	else
-		SetDock("LEFT")
-	end
-end
+-- Right-click menu (tab, panel or any row): pin, hover, which edge, and which
+-- launchers are listed. Defined after RebuildRows.
+local ShowMenu
+local menuFrame
 
 local function CreateRow(index, launcher)
 	local row = CreateFrame("Button", nil, drawer)
@@ -341,7 +336,7 @@ local function CreateRow(index, launcher)
 		local secure = secureByName[launcher.name]
 		if not secure then
 			secure = CreateFrame("Button", nil, UIParent, "SecureActionButtonTemplate")
-			secure:RegisterForClicks("AnyUp")
+			secure:RegisterForClicks("LeftButtonUp")
 			secure:SetAttribute("type", "macro")
 			secure:SetAttribute("macrotext", launcher.macro)
 			secure:SetFrameStrata("MEDIUM")
@@ -357,6 +352,11 @@ local function CreateRow(index, launcher)
 		table.insert(secureRows, row)
 	else
 		row:SetScript("OnClick", launcher.onClick)
+		row:SetScript("OnMouseUp", function(self, button)
+			if button == "RightButton" then
+				ShowMenu()
+			end
+		end)
 	end
 
 	return row
@@ -408,6 +408,60 @@ local function RebuildRows()
 	ApplyPosition()
 end
 
+function ShowMenu()
+	local db = DB()
+	db.hidden = db.hidden or {}
+	if not menuFrame then
+		menuFrame = CreateFrame("Frame", "JohnnysAddonHubMenu", UIParent, "UIDropDownMenuTemplate")
+	end
+	local menu = {
+		{ text = "Addon Hub", isTitle = 1, notCheckable = 1 },
+		{
+			text = "Keep open (pin)",
+			checked = db.pinned and true or false,
+			func = TogglePinned,
+		},
+		{
+			text = "Open when the mouse touches the tab",
+			checked = db.hover and true or false,
+			keepShownOnClick = 1,
+			func = function()
+				db.hover = not db.hover
+			end,
+		},
+		{ text = "Dock to", isTitle = 1, notCheckable = 1 },
+	}
+	for _, dock in ipairs({ { "LEFT", "Left edge" }, { "RIGHT", "Right edge" }, { "TOP", "Top edge" } }) do
+		table.insert(menu, {
+			text = dock[2],
+			checked = (db.dock == dock[1]),
+			func = function() SetDock(dock[1]) end,
+		})
+	end
+	table.insert(menu, { text = "List", isTitle = 1, notCheckable = 1 })
+	for _, launcher in ipairs(LAUNCHERS) do
+		if not launcher.addon or IsAddOnLoaded(launcher.addon) then
+			local name = launcher.name
+			table.insert(menu, {
+				text = name,
+				checked = not db.hidden[name],
+				keepShownOnClick = 1,
+				func = function()
+					-- The Button Forge row's secure button can't be re-laid in combat.
+					if InCombatLockdown() then
+						JohnnysAddonHub:Print("Can't change the list in combat.")
+						return
+					end
+					db.hidden[name] = (not db.hidden[name]) or nil
+					RebuildRows()
+				end,
+			})
+		end
+	end
+	table.insert(menu, { text = CANCEL or "Cancel", notCheckable = 1 })
+	EasyMenu(menu, menuFrame, "cursor", 0, 0, "MENU")
+end
+
 local function OnUpdate(self, elapsed)
 	local db = DB()
 
@@ -429,6 +483,11 @@ local function OnUpdate(self, elapsed)
 	end
 
 	local over = MouseIsOver(tab) or (progress > 0 and MouseIsOver(drawer))
+	-- Stay open while our own right-click menu is up.
+	if not over and progress > 0 and menuFrame and UIDROPDOWNMENU_OPEN_MENU == menuFrame
+		and DropDownList1 and DropDownList1:IsShown() then
+		over = true
+	end
 	local now = GetTime()
 	if over then
 		lastOver = now
@@ -470,6 +529,11 @@ local function CreateDrawer()
 	drawer:SetWidth(PANEL_WIDTH)
 	drawer:SetHeight(HEADER_HEIGHT + FOOTER_HEIGHT + 2)
 	drawer:EnableMouse(true)
+	drawer:SetScript("OnMouseUp", function(self, button)
+		if button == "RightButton" then
+			ShowMenu()
+		end
+	end)
 	StyleBox(drawer, C.ground, 0.95)
 
 	local head = Solid(drawer, "BORDER", C.panel)
@@ -498,7 +562,7 @@ local function CreateDrawer()
 	foot:SetPoint("BOTTOMLEFT", drawer, "BOTTOMLEFT", 10, 1)
 	foot:SetHeight(FOOTER_HEIGHT - 1)
 	foot:SetJustifyV("MIDDLE")
-	foot:SetText("/hub help for options")
+	foot:SetText("Right-click for options")
 
 	tab = CreateFrame("Button", "JohnnysAddonHubTab", drawer)
 	StyleBox(tab, C.panel, 0.95)
@@ -508,7 +572,7 @@ local function CreateDrawer()
 	tab.label:SetJustifyH("CENTER")
 
 	-- Left-click pins/unpins, left-drag moves along the edge, right-click
-	-- cycles which edge the drawer is docked to.
+	-- opens the options menu.
 	tab:SetScript("OnMouseDown", function(self, button)
 		if button == "LeftButton" then
 			pressX, pressY = GetCursorPosition()
@@ -517,7 +581,7 @@ local function CreateDrawer()
 	end)
 	tab:SetScript("OnMouseUp", function(self, button)
 		if button == "RightButton" then
-			CycleDock()
+			ShowMenu()
 		elseif button == "LeftButton" then
 			if not dragging then
 				TogglePinned()
@@ -600,7 +664,7 @@ function Hub:HandleCommand(input)
 		SetDock("LEFT")
 	else
 		JohnnysAddonHub:Print("/hub - show or hide the drawer tab")
-		JohnnysAddonHub:Print("/hub left | right | top - dock to that screen edge (or right-click the tab)")
+		JohnnysAddonHub:Print("/hub left | right | top - dock to that screen edge (or right-click the drawer)")
 		JohnnysAddonHub:Print("/hub pin - keep the drawer open (or click the tab)")
 		JohnnysAddonHub:Print("/hub hover - toggle opening when the mouse touches the tab")
 		JohnnysAddonHub:Print("/hub reset - back to the left edge with default settings")
