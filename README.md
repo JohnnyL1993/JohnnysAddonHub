@@ -4,6 +4,10 @@ A World of Warcraft 3.3.5a addon for the Warmane private server.
 
 Always-on-screen launcher bar - shows a button for each of Johnny's standalone addons (Blacklist, Gear Advisor, Professions, Raid Browser, Raid Comp, Raid Roll) that's currently installed and enabled.
 
+## Screenshots
+
+![The hub drawer, pinned open](screenshots/hub.png)
+
 ## Requirements
 
 No other addons required. The bar shows a button for each of Johnny's addons you have installed (Raid Comp, Gear Advisor, Professions, Blacklist, Raid Browser, Raid Roll).
